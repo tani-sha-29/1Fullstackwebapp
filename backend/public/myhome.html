@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudentCare | Counselling Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(to bottom right, rgba(52, 58, 64, 0.7), rgba(108, 117, 125, 0.5));
+      z-index: 1;
+    }
+
+    .navbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+
+    .navbar .logo {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #ffcc00;
+    }
+
+    .nav-links .signup-btn {
+      padding: 8px 18px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-links .signup-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 80px);
+      text-align: center;
+      color: white;
+      padding: 20px;
+    }
+
+    .main-content h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .main-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+    }
+
+    .login-options {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px 40px;
+      border-radius: 10px;
+      min-width: 220px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .login-box:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .login-box h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .login-box p {
+      font-size: 0.95rem;
+      color: #ddd;
+    }
+
+    @media (max-width: 768px) {
+      .main-content h1 {
+        font-size: 2.2rem;
+      }
+
+      .main-content p {
+        font-size: 1rem;
+      }
+
+      .login-options {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">StudentCare</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#about">About</a>
+      <button class="signup-btn"><a href=register.html>Register Now</a></button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>Your Journey to Growth Starts Here</h1>
+    <p>Get support, guidance, and personalized counselling for a better future.</p>
+
+    <!-- Sign-in Options -->
+    <div class="login-options">
+      <div class="login-box" onclick="location.href='studentlog.html'">
+        <h3>Sign in as Student</h3>
+        <p>Access your counselling sessions and personal dashboard.</p>
+      </div>
+
+      <div class="login-box" onclick="location.href='adminlog.html'">
+        <h3>Sign in as Admin</h3>
+        <p>Manage student sessions, counsellor data, and reports.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

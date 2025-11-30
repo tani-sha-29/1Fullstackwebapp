@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Information Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      padding: 40px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2193b0;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      background-color: #2193b0;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #176a84;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+    
+    .dropdown-container {
+    position: relative;
+    margin: 15px 0;
+  }
+
+  .dropdown-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .custom-dropdown {
+    position: relative;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+
+  .custom-dropdown:hover {
+    border-color: #2193b0;
+  }
+
+  .dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: max-height 0.4s ease;
+    z-index: 100;
+  }
+
+  .dropdown-options.open {
+    max-height: 200px;
+  }
+
+  .dropdown-options div {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .dropdown-options div:hover {
+    background: #f0f8ff;
+  }
+
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Student Information Form</h2>
+    <form id="studentForm">
+
+      <!-- Personal Info -->
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" required>
+
+      <!-- High School Marks -->
+      <h3>High School Marks (Out of 100)</h3>
+
+      <label for="math">Math</label>
+      <input type="number" id="math" required>
+
+      <label for="science">Science</label>
+      <input type="number" id="science" required>
+
+      <label for="english">English</label>
+      <input type="number" id="english" required>
+
+      <label for="hindi">Hindi</label>
+      <input type="number" id="hindi" required>
+
+      <!-- 10+2 Marks -->
+      <h3>10+2 Marks (Out of 100)</h3>
+
+      <label for="physics">Physics</label>
+      <input type="number" id="physics" required>
+
+      <label for="chemistry">Chemistry</label>
+      <input type="number" id="chemistry" required>
+
+      <label for="math12">Math</label>
+      <input type="number" id="math12" required>
+
+      <div class="dropdown-container">
+      <label class="dropdown-label">First Branch Preference</label>
+      <div class="custom-dropdown" onclick="toggleDropdown('branch1Options')">
+        <span id="branch1Selected">Select a branch</span>
+      </div>
+      <div class="dropdown-options" id="branch1Options">
+        <div onclick="selectBranch('CSE', 'branch1Selected', 'branch1Input')">Computer Science</div>
+        <div onclick="selectBranch('ECE', 'branch1Selected', 'branch1Input')">Electronics & Communication</div>
+        <div onclick="selectBranch('MECH', 'branch1Selected', 'branch1Input')">Mechanical Engineering</div>
+        <div onclick="selectBranch('AI', 'branch1Selected', 'branch1Input')">Artificial Intelligence</div>
+        <div onclick="selectBranch('CIVIL', 'branch1Selected', 'branch1Input')">Civil Engineering</div>
+      </div>
+      <input type="hidden" name="branch1" id="branch1Input" required />
+    </div>
+
+    <div class="dropdown-container">
+      <label class="dropdown-label">Second Branch Preference</label>
+      <div class="custom-dropdown" onclick="toggleDropdown('branch2Options')">
+        <span id="branch2Selected">Select a branch</span>
+      </div>
+      <div class="dropdown-options" id="branch2Options">
+        <div onclick="selectBranch('CSE', 'branch2Selected', 'branch2Input')">Computer Science</div>
+        <div onclick="selectBranch('ECE', 'branch2Selected', 'branch2Input')">Electronics & Communication</div>
+        <div onclick="selectBranch('MECH', 'branch2Selected', 'branch2Input')">Mechanical Engineering</div>
+        <div onclick="selectBranch('AI', 'branch2Selected', 'branch2Input')">Artificial Intelligence</div>
+        <div onclick="selectBranch('CIVIL', 'branch2Selected', 'branch2Input')">Civil Engineering</div>
+      </div>
+      <input type="hidden" name="branch2" id="branch2Input" required />
+    </div> 
+
+      <button type="submit">Submit</button>
+      <p class="message" id="formMessage"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('studentForm');
+    const message = document.getElementById('formMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+
+        hs_math: document.getElementById('math').value,
+        hs_science: document.getElementById('science').value,
+        hs_english: document.getElementById('english').value,
+        hs_hindi: document.getElementById('hindi').value,
+
+        phy: document.getElementById('physics').value,
+        chem: document.getElementById('chemistry').value,
+        math12: document.getElementById('math12').value,
+        
+        branch_pref_1: document.getElementById('branch1Input').value,
+        branch_pref_2: document.getElementById('branch2Input').value
+      };
+      
+    
+      try {
+        const res = await fetch('http://localhost:3000/api/student-info', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+         
+        if (result.success) {
+          // ✅ Wait 2 seconds then redirect to seatgot.html
+          setTimeout(() => {
+            window.location.href = "seatgot.html";
+          }, 2000);
+        } else {
+          alert("❌ " + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Server error!");
+      }
+    });
+//dropdown logic 
+      function toggleDropdown(id) {
+      document.querySelectorAll('.dropdown-options').forEach(el => {
+        if (el.id === id) {
+          el.classList.toggle('open');
+        } else {
+          el.classList.remove('open');
+        }
+      });
+    }
+
+    function selectBranch(value, displayId, inputId) {
+      const branchNames = {
+        CSE: "Computer Science",
+        ECE: "Electronics & Communication",
+        MECH: "Mechanical Engineering",
+        AI: "Artificial Intelligence",
+        CIVIL: "Civil Engineering"
+      };
+      document.getElementById(displayId).textContent = branchNames[value];
+      document.getElementById(inputId).value = value;
+
+      document.querySelectorAll('.dropdown-options').forEach(el => el.classList.remove('open'));
+    }
+
+    // Close dropdowns when clicking outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown-container')) {
+        document.querySelectorAll('.dropdown-options').forEach(el => el.classList.remove('open'));
+      }
+    });
+
+//http://localhost:3000/studentform.html    
+   
+  </script>
+
+</body>
+</html>

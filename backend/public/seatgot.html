@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check Seat Allocation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Your original styles retained here */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; 
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #8e9eab, #eef2f3);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      color: #fff;
+      animation: fadeIn 1s ease;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    input[type="email"], input[type="file"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="email"]:focus {
+      box-shadow: 0 0 0 2px #007bff80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #0056b3, #009edc);
+    }
+
+    .result, .payment-form {
+      margin-top: 25px;
+      font-size: 17px;
+      line-height: 1.6;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .allocated {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+
+    .not-allocated {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-card">
+    <h1>🎓 Check Your Seat Allocation</h1>
+
+    <input type="email" id="email" placeholder="Enter your email address" />
+    <button onclick="checkAllocation()">Check Now</button>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <!-- Accept Button -->
+    <button id="acceptBtn" onclick="showPaymentForm()" style="display: none;">✅ Accept Allocated Branch</button>
+
+    <!-- Payment Form -->
+    <div id="paymentForm" class="payment-form" style="display: none;">
+      <p><strong>Upload your bank fee payment receipt:</strong></p>
+      <input type="file" id="receiptUpload" accept=".jpg,.jpeg,.png,.pdf" />
+      <button onclick="submitReceipt()">📤 Submit Receipt</button>
+    </div>
+  </div>
+
+  <script>
+    let currentEmail = '';
+
+    async function checkAllocation() {
+      const email = document.getElementById('email').value.trim();
+      const resultDiv = document.getElementById('result');
+      const acceptBtn = document.getElementById('acceptBtn');
+      const paymentForm = document.getElementById('paymentForm');
+
+      resultDiv.style.display = 'none';
+      acceptBtn.style.display = 'none';
+      paymentForm.style.display = 'none';
+
+      if (!email) {
+        resultDiv.innerHTML = '⚠️ Please enter a valid email address.';
+        resultDiv.className = 'result not-allocated';
+        resultDiv.style.display = 'block';
+        return;
+      }
+      
+      document.getElementById('email').disabled = true;
+
+      currentEmail = email;
+    
+
+      try {
+        const response = await fetch('http://localhost:3000/api/check-allocation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          resultDiv.textContent = data.message || '❌ Something went wrong.';
+          resultDiv.className = 'result not-allocated';
+          resultDiv.style.display = 'block';
+          return;
+        }
+
+        if (data.allocated_branch) {
+          resultDiv.innerHTML = ` <strong>${data.name}</strong>, you have been allocated <strong>${data.allocated_branch}</strong>. Congratulations!`;
+          resultDiv.className = 'result allocated';
+          acceptBtn.style.display = 'block'; // Show accept button
+        } else {
+          resultDiv.innerHTML = ` <strong>${data.name}</strong>, your seat has <strong>not been allocated yet</strong>. Please check again later.`;
+          resultDiv.className = 'result not-allocated';
+        }
+
+        resultDiv.style.display = 'block';
+
+      } catch (err) {
+        console.error('Fetch error:', err);
+        resultDiv.textContent = '🚫 Error contacting server.';
+        resultDiv.className = 'result not-allocated';
+        resultDiv.style.display = 'block';
+      }
+    }
+
+    function showPaymentForm() {
+      document.getElementById('paymentForm').style.display = 'block';
+    }
+
+    async function submitReceipt() {
+      const receiptInput = document.getElementById('receiptUpload');
+      const file = receiptInput.files[0];
+
+      if (!file) {
+        alert('⚠️ Please select a receipt file to upload.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('email', currentEmail);
+      formData.append('receipt', file);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/upload-receipt', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('✅ Receipt submitted successfully!');
+          document.getElementById('paymentForm').style.display = 'none';
+          document.getElementById('acceptBtn').style.display = 'none';
+        } else {
+          alert('❌ Error submitting receipt: ' + result.message);
+        }
+
+      } catch (err) {
+        console.error('Receipt upload error:', err);
+        alert('🚫 Failed to submit receipt.');
+      }
+    }
+  </script>
+
+</body>
+</html>

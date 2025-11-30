@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Allocate Branch</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f4f6f8; }
+    h1 { text-align: center; color: #333; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background-color: #007bff; color: white; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    select, button { padding: 6px 10px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; }
+    button { background-color: #28a745; color: white; cursor: pointer; transition: 0.3s; }
+    button:hover { background-color: #218838; }
+    .allocated { font-weight: bold; color: green; }
+    .not-allocated { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel - Allocate Branch</h1>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Total Marks</th>
+        <th>Branch 1</th>
+        <th>Branch 2</th>
+        <th>Allocated Branch</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadStudents() {
+      try {
+        const response = await fetch('http://localhost:3000/api/students');
+        const data = await response.json();
+
+        const tbody = document.querySelector('#studentTable tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(student => {
+          const totalMarks = parseInt(student.phy) + parseInt(student.chem) + parseInt(student.math12);
+          const allocated = student.allocated_branch || 'Not allocated';
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.email}</td>
+            <td>${totalMarks}</td>
+            <td>${student.branch_pref_1}</td>
+            <td>${student.branch_pref_2}</td>
+            <td class="${allocated === 'Not allocated' ? 'not-allocated' : 'allocated'}" id="allocated-${student.id}">
+              ${allocated}
+            </td>
+            <td>
+              <select id="select-${student.id}">
+                <option value="">Select branch</option>
+                <option value="${student.branch_pref_1}">${student.branch_pref_1}</option>
+                <option value="${student.branch_pref_2}">${student.branch_pref_2}</option>
+              </select>
+              <button onclick="allocateBranch('${student.id}')">Allocate</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        alert('Failed to load students.');
+      }
+    }
+
+    async function allocateBranch(studentId) {
+      const branch = document.getElementById(`select-${studentId}`).value;
+      if (!branch) return alert('Select a branch first.');
+
+      const res = await fetch('http://localhost:3000/api/allocate-branch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: studentId, branch })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        alert('Branch allocated successfully!');
+        loadStudents();
+      } else {
+        alert('Allocation failed.');
+      }
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>

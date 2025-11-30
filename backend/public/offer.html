@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Verify Fee & Offer Letter</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f4f6f8; }
+    h1 { text-align: center; color: #333; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background-color: #007bff; color: white; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    button { padding: 6px 10px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; background-color: #007bff; color: white; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .disabled-btn { background-color: #ccc !important; cursor: not-allowed !important; }
+    a { color: #007bff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel - Verify Fee & Generate Offer Letter</h1>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Allocated Branch</th>
+        <th>Receipt</th>
+        <th>Fee Verified</th>
+        <th>Verify</th>
+        <th>Offer Letter</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadStudents() {
+      const res = await fetch('http://localhost:3000/api/students');
+      const data = await res.json();
+      const tbody = document.querySelector('#studentTable tbody');
+      tbody.innerHTML = '';
+
+      data.forEach(student => {
+        if (!student.allocated_branch) return; // only show allocated
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.allocated_branch}</td>
+          <td>
+            ${student.fee_receipt_url 
+              ? `<a href="${student.fee_receipt_url}" target="_blank">View</a>` 
+              : 'Not uploaded'}
+          </td>
+          <td id="fee-status-${student.id}">${student.fee_verified ? 'Verified' : 'Pending'}</td>
+          <td>
+            <button onclick="verifyFee('${student.id}')" ${student.fee_verified || !student.fee_receipt_url ? 'disabled class="disabled-btn"' : ''}>Verify Fee</button>
+          </td>
+          <td>
+            <button onclick="generateOffer('${student.id}')" ${!student.fee_verified ? 'disabled class="disabled-btn"' : ''}>Generate</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function verifyFee(id) {
+      const res = await fetch('http://localhost:3000/api/verify-fee', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('Fee verified.');
+        loadStudents();
+      } else {
+        alert('Verification failed.');
+      }
+    }
+
+    function generateOffer(id) {
+      window.open(`http://localhost:3000/api/offer-letter/${id}`, '_blank');
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
