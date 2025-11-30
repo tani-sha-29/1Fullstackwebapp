@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudentCare | Register</title>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .register-box {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 350px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .register-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #2193b0;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #176a84;
+    }
+
+    .toggle {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .toggle label {
+      font-weight: bold;
+    }
+
+    .message {
+      color: green;
+      text-align: center;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="register-box">
+  <h2>User Registration</h2>
+  <form id="registerForm">
+    <input type="text" id="name" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+
+    <div class="toggle">
+      <label for="role">Register As:</label>
+      <select id="role" required>
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button type="submit">Register</button>
+    <p class="message" id="successMessage"></p>
+    <p class="error" id="errorMessage"></p>
+  </form>
+</div>
+
+<script>
+  // 🔑 Firebase config (your existing config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyC8zG8ccVMD_Odht581mH5u5X6kKLLy8ds",
+    authDomain: "student-care-f4e27.firebaseapp.com",
+    projectId: "student-care-f4e27",
+    storageBucket: "student-care-f4e27.appspot.com",
+    messagingSenderId: "266655511996",
+    appId: "1:266655511996:web:b872e54e8bae81e13ea7b9"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const registerForm = document.getElementById('registerForm');
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
+
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const role = document.getElementById("role").value;
+
+    if (!name || !email || !password || !role) {
+      errorMessage.textContent = "Please fill all fields.";
+      return;
+    }
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+
+        return db.collection('users').doc(user.uid).set({
+          name,
+          email,
+          role,
+          createdAt: new Date()
+        });
+      })
+       .then(() => {
+        successMessage.textContent = "✅ Registered successfully!";
+        errorMessage.textContent = "";
+
+        // ✅ Wait for user to be fully authenticated before redirect
+        
+            setTimeout(() => {
+                window.location.href = "myhome.html";
+            }, 1500);
+            
+        });
+    })
+
+      .catch((error) => {
+        errorMessage.textContent = "❌ " + error.message;
+        successMessage.textContent = "";
+      });
+  
+</script>
+</body>
+</html>
